@@ -25,7 +25,7 @@ let right_rotate (tree: 'a rb_tree) (node: 'a): 'a rb_tree =
 let insert_fixup (tree: 'a rb_tree) (node: 'a): 'a rb_tree =
     raise NotImplemented
 
-(* TODO: Imp    lement insert *)
+(* TODO: Implement insert *)
 let insert (tree: 'a rb_tree) (value: 'a): 'a rb_tree =
     raise NotImplemented
 
@@ -35,4 +35,11 @@ let delete (tree: 'a rb_tree) (value: 'a): 'a rb_tree =
 
 (* TODO: Implement is_valid *)
 let is_valid (tree: 'a rb_tree): bool =
+    raise NotImplemented
+
+
+(* Continuation style *)
+
+(* TODO: implement insert using continuations*)
+let insert_coninutation (tree: 'a rb_tree) (value: 'a): 'a rb_tree =
     raise NotImplemented
