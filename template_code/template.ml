@@ -1,45 +1,53 @@
 (* Prelude *)
 exception NotImplemented
 
-(* Colours used for nodes in the Red-Black Tree *)
+(* red black tree colours *)
 type color = Red | Black
 
-(* Red-Black Tree node  type*)
+(* Red-Black Tree nodes *)
 type 'a rb_tree =
-| Empty
-| Node of color * 'a rb_tree * 'a * 'a rb_tree (* colour, left sub tree, node itself, right sub-tree*)
+  | Empty
+  | Node of color * 'a rb_tree * 'a * 'a rb_tree  (* color, left sub-tree, node value, right sub-tree *)
 
 (* Functions *)
 
-(* Helper Functions *)
+(* 0. helper *)
 
-(* TODO: Implement helper function left_rotate *)
-let left_rotate (tree: 'a rb_tree) (node: 'a): 'a rb_tree =
-    raise NotImplemented
-    
-(* TODO: Implement helper function left_rotate *)
-let right_rotate (tree: 'a rb_tree) (node: 'a): 'a rb_tree =
+(* TODO: Implement helper function to create a new node *)
+let make_node (color: color) (left: 'a rb_tree) (value: 'a) (right: 'a rb_tree): 'a rb_tree =
     raise NotImplemented
 
-(* TODO: Implement helper function insert-fixup *)
-let insert_fixup (tree: 'a rb_tree) (node: 'a): 'a rb_tree =
-    raise NotImplemented
+(* 1. Insertion *)
 
-(* TODO: Implement insert *)
+(* TODO: Implement balance function for insertion *)
+let balance (color: color) (left: 'a rb_tree) (value: 'a) (right: 'a rb_tree): 'a rb_tree =
+  raise NotImplemented
+
+(* TODO: Implement non-tail-recursive insert function *)
 let insert (tree: 'a rb_tree) (value: 'a): 'a rb_tree =
     raise NotImplemented
 
-(* TODO: Implement delete *)
+  (* TODO: Implement tail-recursive insert function *)
+  let insert_tr (tree: 'a rb_tree) (value: 'a): 'a rb_tree =
+    raise NotImplemented
+
+(* 2. deletion *)
+
+(* TODO: Implement helper function to recolor nodes, used in deletion *)
+let recolor (tree: 'a rb_tree): 'a rb_tree =
+  raise NotImplemented
+
+(* TODO: Implement balance_delete function for deletion balancing *)
+let balance_delete (color: color) (left: 'a rb_tree) (value: 'a) (right: 'a rb_tree): 'a rb_tree =
+  raise NotImplemented
+
+(* TODO: Implement delete function *)
 let delete (tree: 'a rb_tree) (value: 'a): 'a rb_tree =
-    raise NotImplemented
+  raise NotImplemented
 
-(* TODO: Implement is_valid *)
+
+(* 3. Tree validity *)
+
+(* TODO: Implement is_valid function to check if the tree satisfies Red-Black properties *)
 let is_valid (tree: 'a rb_tree): bool =
-    raise NotImplemented
-
-
-(* Continuation style *)
-
-(* TODO: implement insert using continuations*)
-let insert_coninutation (tree: 'a rb_tree) (value: 'a): 'a rb_tree =
-    raise NotImplemented
+  raise NotImplemented
