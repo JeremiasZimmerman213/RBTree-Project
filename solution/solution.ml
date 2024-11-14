@@ -112,3 +112,30 @@ let rec is_valid = function
         | Black -> true
       in
       check_red_children && is_valid left && is_valid right
+
+(* Helper to print spaces for indentation *)
+let print_spaces n =
+  for _ = 1 to n do
+    print_string " "
+  done
+
+(* Recursive helper to print the tree with a given indentation level *)
+let rec print_tree_with_indent tree indent =
+  match tree with
+  | Empty ->
+      print_spaces indent;
+      print_endline "Empty"
+  | Node (color, left, value, right) ->
+      (* Print right subtree first (sideways representation) *)
+      print_tree_with_indent right (indent + 4);
+      print_spaces indent;
+      (* Print current node color and value *)
+      Printf.printf "%s - %s\n"
+        (match color with Red -> "R" | Black -> "B")
+        (string_of_int value);
+      (* Then print left subtree *)
+      print_tree_with_indent left (indent + 4)
+
+(* The main print_tree function that prints the entire RB tree *)
+let print_tree tree =
+  print_tree_with_indent tree 0
