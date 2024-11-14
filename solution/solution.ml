@@ -113,25 +113,43 @@ let rec is_valid = function
       in
       check_red_children && is_valid left && is_valid right
 
+(* Helper function to create a node *)
+let make_node color left value right =
+  Node (color, left, value, right)
+
+(* Helper function to format a node *)
+let format_node color value =
+  match color with
+  | Red -> Printf.sprintf "R - %d" value
+  | Black -> Printf.sprintf "B - %d" value
+
 (* Helper to print spaces for indentation *)
 let print_spaces n =
   for _ = 1 to n do
     print_string " "
   done
 
-(* Format the node with color and value *)
-let format_node color value =
-  match color with
-  | Red -> Printf.sprintf "R - %d" value
-  | Black -> Printf.sprintf "B - %d" value
-
-(* Recursive helper to print the tree with a given indentation level *)
+(* Recursive helper to print the tree with indentation *)
 let rec print_tree_with_indent tree indent =
   match tree with
   | Nil ->
       print_spaces indent;
       print_endline "Nil"
   | Node (color, left, value, right) ->
+      (* Print right subtree first for sideways view *)
+      print_tree_with_indent right (indent + 6);
+      
+      (* Print current node with its color and value *)
+      print_spaces indent;
+      Printf.printf "%s\n" (format_node color value);
+      
+      (* Print left subtree *)
+      print_tree_with_indent left (indent + 6)
+
+(* Main function to print the entire tree *)
+let print_tree tree =
+  print_endline "Red-Black Tree Structure:";
+  print_tree_with_indent tree 0) ->
       (* Print right subtree first (sideways representation) *)
       print_tree_with_indent right (indent + 6); (* Increase indentation for better separation *)
       
