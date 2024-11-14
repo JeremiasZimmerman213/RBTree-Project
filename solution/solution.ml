@@ -29,8 +29,6 @@ let balance = function
   | c, l, v, r ->
       Node (c, l, v, r)
 
-
-
 (* insert function *)
 let rec insert tree value =
   let rec insert_aux = function
