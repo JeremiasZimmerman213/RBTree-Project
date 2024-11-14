@@ -12,13 +12,13 @@ let make_node color left value right =
 
 (* Helper function to balance a tree after insertion *)
 let balance = function
+  | Black, Node (Red, Node (Red, a, x, b), y, c), z, d
   | Black, Node (Red, a, x, Node (Red, b, y, c)), z, d
   | Black, a, x, Node (Red, Node (Red, b, y, c), z, d)
-  | Black, Node (Red, Node (Red, a, x, b), y, c), z, d
   | Black, a, x, Node (Red, b, y, Node (Red, c, z, d)) ->
-      Node (Red, make_node Black a x b, y, make_node Black c z d)
-  | c, l, v, r ->
-      Node (c, l, v, r)
+      Node (Red, Node (Black, a, x, b), y, Node (Black, c, z, d))
+  | color, left, value, right ->
+      Node (color, left, value, right)
 
 (* Insert function *)
 let rec insert tree value =
