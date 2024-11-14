@@ -3,7 +3,7 @@ type color = Red | Black
 
 (* type for tree node *)
 type 'a rb_tree =
-  | Empty
+  | Nil
   | Node of color * 'a rb_tree * 'a * 'a rb_tree
 
 (* helper function to create node *)
@@ -32,7 +32,7 @@ let balance = function
 (* insert function *)
 let rec insert tree value =
   let rec insert_aux = function
-    | Empty -> Node (Red, Empty, value, Empty)
+    | Nil -> Node (Red, Nil, value, Nil)
     | Node (color, left, y, right) as node ->
         if value < y then balance (color, insert_aux left, y, right)
         else if value > y then balance (color, left, y, insert_aux right)
@@ -40,17 +40,17 @@ let rec insert tree value =
   in
   match insert_aux tree with
   | Node (_, left, y, right) -> Node (Black, left, y, right)
-  | Empty -> Empty  (* this will never happen *)
+  | Nil -> Nil  (* this will never happen *)
 
 (* tail-recursive insert *)
 let insert_tr tree value =
   let rec insert_aux path = function
-    | Empty ->
+    | Nil ->
         List.fold_left (fun acc (color, y, left_or_right) ->
           match left_or_right with
-          | `Left -> balance (color, acc, y, Empty)
-          | `Right -> balance (color, Empty, y, acc)
-        ) (Node (Red, Empty, value, Empty)) path
+          | `Left -> balance (color, acc, y, Nil)
+          | `Right -> balance (color, Nil, y, acc)
+        ) (Node (Red, Nil, value, Nil)) path
     | Node (color, left, y, right) as node ->
         if value < y then
           insert_aux ((color, y, `Left) :: path) left
@@ -61,12 +61,12 @@ let insert_tr tree value =
   in
   match insert_aux [] tree with
   | Node (_, left, y, right) -> Node (Black, left, y, right)  (* make root black *)
-  | Empty -> Empty  (* this will never happen *)
+  | Nil -> Nil  (* this will never happen *)
 
 (* helper function to recolor nodes, used in deletion *)
 let recolor = function
   | Node (_, l, x, r) -> Node (Black, l, x, r)
-  | Empty -> Empty
+  | Nil -> Nil
 
 (* balace function for deletion *)
 let rec balance_delete = function
@@ -80,30 +80,30 @@ let rec balance_delete = function
 (* delete node from tree *)
 let rec delete tree value =
   let rec delete_aux = function
-    | Empty -> Empty
+    | Nil -> Nil
     | Node (color, left, y, right) as node ->
         if value < y then balance_delete (color, delete_aux left, y, right)
         else if value > y then balance_delete (color, left, y, delete_aux right)
         else (* Found node to delete *)
           match left, right with
-          | Empty, _ -> recolor right
-          | _, Empty -> recolor left
+          | Nil, _ -> recolor right
+          | _, Nil -> recolor left
           | _ ->
               let rec min_value_node = function
-                | Node (_, Empty, x, _) -> x
+                | Node (_, Nil, x, _) -> x
                 | Node (_, left, _, _) -> min_value_node left
-                | Empty -> failwith "Tree invariant broken"
+                | Nil -> failwith "Tree invariant broken"
               in
               let min_right = min_value_node right in
               balance_delete (color, left, min_right, delete_aux right)
   in
   match delete_aux tree with
   | Node (_, left, y, right) -> Node (Black, left, y, right)
-  | Empty -> Empty  (* this will never happen *)
+  | Nil -> Nil  (* this will never happen *)
 
 (* check for validity *)
 let rec is_valid = function
-  | Empty -> true
+  | Nil -> true
   | Node (color, left, _, right) ->
       let check_red_children = match color with
         | Red -> (match left, right with
@@ -119,23 +119,30 @@ let print_spaces n =
     print_string " "
   done
 
+(* Format the node with color and value *)
+let format_node color value =
+  match color with
+  | Red -> Printf.sprintf "R - %d" value
+  | Black -> Printf.sprintf "B - %d" value
+
 (* Recursive helper to print the tree with a given indentation level *)
 let rec print_tree_with_indent tree indent =
   match tree with
-  | Empty ->
+  | Nil ->
       print_spaces indent;
-      print_endline "Empty"
+      print_endline "Nil"
   | Node (color, left, value, right) ->
       (* Print right subtree first (sideways representation) *)
-      print_tree_with_indent right (indent + 4);
+      print_tree_with_indent right (indent + 6); (* Increase indentation for better separation *)
+      
+      (* Print current node with color and value *)
       print_spaces indent;
-      (* Print current node color and value *)
-      Printf.printf "%s - %s\n"
-        (match color with Red -> "R" | Black -> "B")
-        (string_of_int value);
-      (* Then print left subtree *)
-      print_tree_with_indent left (indent + 4)
+      Printf.printf "%s\n" (format_node color value);
+      
+      (* Print left subtree *)
+      print_tree_with_indent left (indent + 6)
 
-(* The main print_tree function that prints the entire RB tree *)
+(* Main function to print the Red-Black Tree *)
 let print_tree tree =
+  print_endline "Tree:";
   print_tree_with_indent tree 0
