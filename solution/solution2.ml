@@ -3,13 +3,13 @@ type color = Red | Black
 
 (* define the recursive data type for a tree *)
 (* either Nil (Leaf) or a recursvie Node with a colour, a value, a left sub tree and right sub tree*)
-type 'a rbtree = 
+type 'a rb_tree = 
   | Nil 
-  | Node of color * 'a * 'a rbtree * 'a rbtree
+  | Node of color * 'a * 'a rb_tree * 'a rb_tree
 
 
 (* balance helper function needed to Okasaki's insert algorithm *)
-let balance = function
+let balance (color, a, left, right) = match color, a, left, right with
   | Black, z, Node (Red, y, Node (Red, x, a, b), c), d
   | Black, z, Node (Red, x, a, Node (Red, y, b, c)), d
   | Black, x, a, Node (Red, z, Node (Red, y, b, c), d)
@@ -17,7 +17,8 @@ let balance = function
     Node (Red, y, Node (Black, x, a, b), Node (Black, z, c, d))
   | a, b, c, d -> Node (a, b, c, d)
 
-  let insert x s =
+
+  let insert s x =
     let rec ins = function
       | Nil -> Node (Red, x, Nil, Nil)
       | Node (color, y, a, b) as s ->
