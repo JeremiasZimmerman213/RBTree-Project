@@ -52,20 +52,12 @@ In the above cases, the notation Bz indicated that there is a node z that is bla
     a   b c   d
 ```
 
-
-
-
-There are only 2 possible conflicts when inserting a new node and colouring it red: either it's parent is red (and we thus have consecutive red nodes, violating property 4), or we inserted the root (thus violating property 2). To fix the property, let a be the new node we just inserted, and let b be its uncle (i.e. b is the sibling of a's parent). Then, until the conflict is solved:
-1. Case 1: b is red. In this case, we recolour the nodes, which brings the conflict two levels up. We change the colour of a's parent, b, and a's parent's parent. Then, a's parent's parent becomes the new a, and b becomes the new a's uncle.
-2. Case 2: b is black & the conflict is not "aligned" with the grand parents (see image below). In this case, we make a rotation at the parent of a to align the nodes and we move to case 3.
-
-![alt text](case2.png "Case 2")
-
-3. Case 3: b is black & the conflict is "aligned" (see image below). In this case, we re-colour a's parent and grand-parent, and we make a rotation at the grand-parent to fix the conflict.
-
-![alt text](case3.png "Case 3")
+Now, if Ry does not have a parent, this means that it is the root of the tree. Thus, we need to make it Black, and then a node has been successfully. However, if Ry has a parent, we need to re-check and make sure that we have not created a new violation of the RB-tree properties. Specifically, since there can't be an issue with the black height, the problem would be that Ry's parent is a red node. So, we need to recursively travel up the tree, fixing these violations, until we reach the root node, where we will finally have a valid RB-tree.
 
 More in depth implementation explanation is given in instructions.md. 
+
+Time complexity analysis:
+There are at most O(log n) recursions, since the height is bounded by O(log n), and the at each recursive step, there is a call to balance which is done in O(1), then the final time comlpexity of the insert function is O(log n)
 
 ### **Deletion:**
 

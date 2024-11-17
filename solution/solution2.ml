@@ -8,6 +8,8 @@ type 'a rb_tree =
   | Node of color * 'a * 'a rb_tree * 'a rb_tree
 
 
+(* 1. INSERT *)
+
 (* balance helper function needed to Okasaki's insert algorithm *)
 let balance (color, a, left, right) = match color, a, left, right with
   (* case 1 *)
@@ -18,20 +20,25 @@ let balance (color, a, left, right) = match color, a, left, right with
   | Black, x, a, Node (Red, z, Node (Red, y, b, c), d)
   (* case 4 *)
   | Black, x, a, Node (Red, y, b, Node (Red, z, c, d)) ->
+    (* perform rotation *)
     Node (Red, y, Node (Black, x, a, b), Node (Black, z, c, d))
   | a, b, c, d -> Node (a, b, c, d)
 
 
-let insert s x =
+let insert t x =
   let rec insert_aux = function
-    | Nil -> Node (Red, x, Nil, Nil)
+    | Nil -> Node (Red, x, Nil, Nil) (* colour the new node red *)
+    (* BST insert - checking if larger or smaller than a node, and recursing down either the left or right *)
+    (* balance is called in order to balance the result of each of the recursive calls *)
     | Node (color, y, a, b) as s ->
       if x < y then balance (color, y, insert_aux a, b)
       else if x > y then balance (color, y, a, insert_aux b)
       else s
   in
-  match insert_aux s with
+  match insert_aux t with
+  (* colour the root black *)
   | Node (_, y, a, b) -> Node (Black, y, a, b)
+  (* this will never happen, but needed for exhaustive pattern match *)
   | Nil -> failwith "failed"
 
 
@@ -59,3 +66,10 @@ let insert_tr s x =
   match insert_aux [] s with
   | Node (_, value, left, right) -> Node (Black, value, left, right)
   | Nil -> failwith "failed"
+
+
+(* 2. DELETION *)
+
+
+
+(* 3. VALIDITY *)
