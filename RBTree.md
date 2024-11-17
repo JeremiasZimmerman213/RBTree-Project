@@ -59,6 +59,9 @@ More in depth implementation explanation is given in instructions.md.
 Time complexity analysis:
 There are at most O(log n) recursions, since the height is bounded by O(log n), and the at each recursive step, there is a call to balance which is done in O(1), then the final time comlpexity of the insert function is O(log n)
 
+Remark: 
+The functional implementation is slightly different than the more commonly found implemenations. Online simulators may implement different algorithms, thus doing the same sequence of inserts in the functional implementation and the other implementation might result in different RB-tree. However, the functional programming one remains valid as none of the 5 properties are violated after insertion.
+
 ### **Deletion:**
 
 
