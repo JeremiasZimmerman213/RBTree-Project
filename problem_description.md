@@ -143,7 +143,7 @@ Your project will be evaluated based on the following:
 ## Additional Resources
 
 - **"Purely Functional Data Structures" by Chris Okasaki**: A foundational text that provides insight into functional data structures, including Red-Black Trees.
-- **Red-Black Trees on Wikipedia**: [https://en.wikipedia.org/wiki/Red–black_tree](https://en.wikipedia.org/wiki/Red–black_tree)
+- **Red-Black Trees on GeeksForGeeks**: [https://www.geeksforgeeks.org/introduction-to-red-black-tree)
 - **OCaml Documentation**: Official documentation for OCaml can assist with language-specific questions.
 
 ---
