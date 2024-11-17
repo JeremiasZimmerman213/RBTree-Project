@@ -1,151 +1,127 @@
-# Implementing Red-Black Trees in OCaml
 
-## Introduction
+# **Implementing Red-Black Trees in OCaml**
 
-Red-Black Trees are a type of self-balancing binary search tree (BST) that maintain balance through strict properties, ensuring efficient operations with a worst-case time complexity of O(log n). They are widely used in functional programming due to their efficient and elegant balancing algorithms.
+## **Introduction**
 
-In this assignment, you will implement a functional Red-Black Tree in OCaml. Your tasks include implementing insertion and deletion operations that preserve the tree's properties, as well as a validation function to ensure the tree remains balanced after modifications.
+A Red-Black Tree is a self-balancing binary search tree (BST) where each node contains an additional bit of information: a color (red or black). This additional property ensures that the tree remains balanced, providing an efficient O(log n) time complexity for insertion, deletion, and search operations.
 
-## Red-Black Tree Properties
+In this implementation, you will use functional programming principles to implement a Red-Black Tree in OCaml. The project focuses on three key components: **insertion**, **deletion**, and **tree validity checking**. Each of these components ensures that the Red-Black Tree adheres to its five defining properties.
 
-A Red-Black Tree is a BST where each node has an additional attribute: a color, either red or black. The tree must satisfy the following properties:
+## **Red-Black Tree Properties**
 
 1. **Every node is either red or black.**
-2. **The root is black.**
-3. **All leaves (Nil nodes) are black.**
-4. **Red nodes cannot have red children.** (No two red nodes appear consecutively on any path.)
-5. **Every path from a node to its descendant leaves contains the same number of black nodes.** (This is known as the black-height.)
+2. **The root node is black.**
+3. **All leaves (`Nil`) are black.**
+4. **Red nodes cannot have red children.**
+5. **Every path from a node to its descendant leaves contains the same number of black nodes.** (This is referred to as the black-height.)
 
-These properties ensure the tree remains approximately balanced, keeping operations efficient.
-
-## Assignment Tasks
-
-### 1. Data Type Definitions
-
-Begin by defining the necessary data types for colors and the Red-Black Tree nodes:
-
-```ocaml
-type color = Red | Black
-
-type 'a rb_tree =
-  | Nil
-  | Node of color * 'a * 'a rb_tree * 'a rb_tree
-```
-
-- **`color`**: Represents the color of a node, either `Red` or `Black`.
-- **`'a rb_tree`**: A polymorphic tree that can store values of any type `'a`.
-
-### 2. Insertion Function
-
-Implement an insertion function that adds a new element to the tree while maintaining Red-Black properties.
-
-- **Function Signature**:
-
-  ```ocaml
-  val insert : 'a rb_tree -> 'a -> 'a rb_tree
-  ```
-
-- **Requirements**:
-  - Insert the new node as in a standard BST, coloring it red.
-  - After insertion, rebalance the tree using a helper function `balance` to fix any violations.
-  - Ensure the root is black after insertion.
-
-- **Balancing Cases**:
-  The `balance` function should handle four specific cases where a red node has a red child, causing a violation of property 4. These cases involve different configurations of red and black nodes and require rotations and recoloring to fix.
-
-- **Hints**:
-  - Use pattern matching in the `balance` function to identify and correct these cases.
-  - Remember that after rebalancing, the tree might still violate the properties higher up, so ensure that balancing is applied recursively as needed.
-
-### 3. Deletion Function
-
-Implement a deletion function that removes an element from the tree while maintaining Red-Black properties.
-
-- **Function Signature**:
-
-  ```ocaml
-  val delete : 'a rb_tree -> 'a -> 'a rb_tree
-  ```
-
-- **Requirements**:
-  - Locate the node to delete using standard BST traversal.
-  - Handle cases where the node has zero, one, or two children.
-  - After deletion, rebalance the tree using a helper function `balance_delete` to fix any violations.
-  - Address "double black" situations that may arise when deleting black nodes.
-
-- **Balancing Considerations**:
-  - When a black node is deleted, it may cause an imbalance in black heights across paths, violating property 5.
-  - The `balance_delete` function should perform rotations and recoloring to redistribute black heights and restore tree properties.
-
-- **Hints**:
-  - Implement a helper function `min_value_node` to find the in-order successor when deleting nodes with two children.
-  - Carefully manage the colors during rebalancing to ensure all properties are maintained.
-
-### 4. Validity Checking Function
-
-Implement a function to verify that a given tree satisfies all Red-Black Tree properties.
-
-- **Function Signature**:
-
-  ```ocaml
-  val is_valid : 'a rb_tree -> bool
-  ```
-
-- **Validation Steps**:
-  - **Black-Height Consistency**: Ensure that all paths from the root to leaves have the same number of black nodes.
-  - **No Consecutive Red Nodes**: Check that no red node has a red child.
-
-- **Hints**:
-  - Use recursive functions:
-    - `black_height` to compute and verify the black height of subtrees.
-    - `no_red_with_red_child` to traverse the tree and check for consecutive red nodes.
-  - Return appropriate values when violations are detected to short-circuit further unnecessary computations.
-
-### 5. Testing and Demonstration
-
-- **Testing**:
-  - Write test cases that cover various scenarios, including:
-    - Inserting elements in ascending, descending, and random orders.
-    - Deleting nodes with zero, one, or two children.
-    - Validating the tree after each operation using your `is_valid` function.
-  - Ensure that your tests demonstrate the correctness and robustness of your implementation.
-
-- **Optional**:
-  - Implement a function to visually print the tree structure, aiding in debugging and demonstration.
-  - Include comments or explanations in your code to clarify complex parts of your implementation.
-
-## Submission Requirements
-
-- **Code Files**:
-  - Provide all OCaml source code files containing your implementation.
-  - Ensure your code is well-organized, properly indented, and includes comments where necessary.
-
-- **Problem Description Document**:
-  - Submit a 1 to 1.5-page PDF document (this document) explaining the problem and summarizing your approach.
-  - Highlight any important algorithms, data structures, or design decisions.
-
-- **Video Explanation**:
-  - Create a 10-minute video summarizing the problem and the key ideas of your solution.
-  - Explain how your implementation maintains the Red-Black Tree properties during insertion and deletion.
-
-## Grading Criteria
-
-Your project will be evaluated based on the following:
-
-- **Correctness**: Functions correctly implement insertion, deletion, and validation while preserving Red-Black properties.
-- **Algorithm Design**: Efficient use of algorithms and data structures, and appropriate handling of edge cases.
-- **Understanding**: Clear demonstration of understanding Red-Black Trees and their balancing mechanisms.
-- **Code Quality**: Readability, organization, commenting, and adherence to good programming practices.
-- **Testing**: Comprehensive test cases that effectively demonstrate the correctness of your implementation.
-- **Communication**: Clarity and depth of explanations in both the written document and the video presentation.
-- **Complexity and Ambition**: The level of challenge in your implementation and any additional features or optimizations.
-
-## Additional Resources
-
-- **"Purely Functional Data Structures" by Chris Okasaki**: A foundational text that provides insight into functional data structures, including Red-Black Trees.
-- **Red-Black Trees on GeeksForGeeks**: [https://www.geeksforgeeks.org/introduction-to-red-black-tree)
-- **OCaml Documentation**: Official documentation for OCaml can assist with language-specific questions.
+Violations of these properties during insertion or deletion must be resolved to maintain the tree's balance and validity.
 
 ---
 
-**Note**: Be sure to test your code thoroughly and ensure that all Red-Black Tree properties are maintained after each operation. Good luck with your implementation!
+## **Data Type Definitions**
+
+1. **Color Type**: Represents the color of a node.
+   ```ocaml
+   type color = Red | Black
+   ```
+
+2. **Tree Type**: Recursive data structure representing the tree.
+   ```ocaml
+   type 'a rb_tree =
+     | Nil
+     | Node of color * 'a * 'a rb_tree * 'a rb_tree
+   ```
+
+The `Nil` nodes represent black leaves, while the `Node` stores a value, a color, and references to left and right subtrees.
+
+---
+
+## **1. Insertion**
+
+Insertion involves adding a new node while preserving the tree's properties. After a standard BST insertion, you must **rebalance** the tree using the `balance` function. 
+
+### **Helper Function: `balance`**
+The `balance` function handles the four rebalancing cases that occur when a red node has a red parent. The key steps include rotations and recoloring to restore the tree's properties.
+
+```ocaml
+let balance (color : color) (value : 'a) (left : 'a rb_tree) (right : 'a rb_tree) : 'a rb_tree = 
+  match color, value, left, right with
+  | (* TODO: Add pattern matching for the four cases *)
+  | _, _, _, _ -> Node (color, value, left, right)
+```
+
+### **Insertion Function**
+You will implement both non-tail-recursive (`insert`) and tail-recursive (`insert_tr`) versions of the insertion function. 
+
+```ocaml
+let insert (tree: 'a rb_tree) (value: 'a): 'a rb_tree =
+  let rec insert_aux = function
+    | Nil -> (* TODO: Add base case for inserting a new node *)
+    | Node (_,_,_,_) -> (* TODO: Add recursive case for BST insertion with balancing *)
+  in
+  (* TODO: Ensure the root remains black after insertion *)
+```
+
+**Key Insight**: The functional implementation of insertion differs from imperative implementations. Okasaki's algorithm emphasizes immutability and elegant recursion, often resulting in structurally distinct but valid trees.
+
+---
+
+## **2. Deletion**
+
+Deletion involves removing a node while maintaining Red-Black properties. If the removed node is black, special handling is required to restore the black-height, often creating a **double-black** situation.
+
+### **Helper Functions**
+- **`recolor`**: Ensures that the replacement node remains black.
+- **`min_value_node`**: Finds the smallest value in the right subtree when replacing a node with two children.
+- **`balance_delete`**: Resolves violations caused by double-black nodes through rotations and recoloring.
+
+```ocaml
+let balance_delete (node : 'a rb_tree) : 'a rb_tree =
+  match node with
+  | (* TODO: Handle rebalancing cases during deletion *)
+  | _ -> node
+```
+
+### **Deletion Function**
+```ocaml
+let delete (tree : 'a rb_tree) (value: 'a): 'a rb_tree =
+  let rec del node =
+    match node with
+    | Nil -> (* TODO: Handle the case where the value is not found *)
+    | Node (_,_,_,_) -> (* TODO: Implement recursive deletion and rebalancing *)
+  in
+  (* TODO: Ensure the root remains black after deletion *)
+```
+
+---
+
+## **3. Tree Validity**
+
+Validation ensures that the tree adheres to the five Red-Black properties. Use the following helper functions:
+
+1. **`black_height`**: Computes the black-height of each path and checks for consistency.
+2. **`no_red_with_red_child`**: Ensures no red node has a red child.
+
+```ocaml
+let is_valid (tree : 'a rb_tree) : bool =
+  let rec black_height = function
+    | Nil -> (* TODO: Implement base case for leaves *)
+    | Node (_,_,_,_) -> (* TODO: Compute and validate black-height *)
+  in
+  let rec no_red_with_red_child = function
+    | Nil -> true
+    | Node (Red,_,Node (Red,_,_,_),_)
+    | Node (Red,_,_,Node (Red,_,_,_)) -> false
+    | Node (_,_,_,_) -> (* TODO: Traverse and validate child nodes *)
+  in
+  (* TODO: Combine black-height and red-violation checks *)
+```
+
+---
+
+## **Conclusion**
+
+This problem challenges you to implement Red-Black Tree operations using functional programming principles. Focus on recursive logic, immutability, and balancing strategies. Use helper functions like `balance` and `balance_delete` to encapsulate complex rebalancing logic. By adhering to the Red-Black properties, your implementation will maintain tree balance and efficiency.
+
+Good luck, and remember to test thoroughly at each step!
