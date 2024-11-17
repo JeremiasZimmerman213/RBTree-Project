@@ -89,14 +89,14 @@ let balance_delete node =
   | _ -> node
 
 (* Delete a value from the Red-Black Tree *)
-let delete tree value =
+let delete tree n =
   let rec del node =
     match node with
     | Nil -> Nil
     | Node (color, x, left, right) ->
-        if value < x then
+        if n < x then
           balance_delete (Node (color, x, del left, right))
-        else if value > x then
+        else if n > x then
           balance_delete (Node (color, x, left, del right))
         else
           (* Found the node to delete *)

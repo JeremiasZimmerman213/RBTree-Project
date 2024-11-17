@@ -1,131 +1,71 @@
-# Red-Black Tree Implementation Instructions
+# **Red-Black Tree Implementation Assignment**
 
-## 0. Helper
+# Assignment Tasks Overview
 
-## `make_node`
+## **1. Insertion**
 
-### Description
-The `make_node` function creates a new node in the red-black tree with a specified color, left subtree, value, and right subtree.
+The insertion algorithm ensures that the red-black tree properties remain intact after adding a new value.
 
-### Instructions
-1. Use the `Node` constructor with the parameters `color`, `left`, `value`, and `right`.
-2. Return the constructed node.
+### **`balance` function**
+- Balances the tree during insertion by performing rotations or recoloring as needed.
+- **Input**: Node information (color, value, left subtree, right subtree).
+- **Output**: A balanced red-black subtree.
+- **TODO**: Implement pattern matching for the four rebalancing cases discussed in the Insertion Explanation.
 
----
+### **`insert` function**
+- Inserts a value into the red-black tree recursively. After each insertion, the tree is balanced using the `balance` function.
+- Ensures the root node is always black after insertion.
+- **TODO**: Implement the recursive helper function `insert_aux` and the logic for ensuring the root’s color.
 
-## 1. Insertion of nodes
+### **`insert_tr` function**
+- Implements insertion in a tail-recursive manner for better efficiency.
+- **TODO**: Implement this as an alternative to `insert`.
 
-## `balance`
-
-### Description
-The `balance` function ensures the red-black tree properties are maintained after an insertion. If an insertion disrupts the properties (such as consecutive red nodes), this function restructures the tree to restore balance.
-
-### Instructions
-1. Write pattern matches to identify cases that require balancing:
-   - Identify cases where two consecutive `Red` nodes occur on the path.
-   - Restructure these patterns to satisfy red-black properties using rotation and color changes.
-2. In the `balance` function body, use the `make_node` helper to create balanced subtrees.
-3. For cases where balancing is not required, simply return the original node structure.
+Refer to the **Insertion Explanation** for a detailed breakdown of the algorithm.
 
 ---
 
-## `insert`
+## **2. Deletion**
 
-### Description
-The `insert` function adds a new value into the red-black tree. If the value already exists, no insertion is performed. After inserting, the tree is balanced and the root node is set to `Black`.
+The deletion algorithm ensures that red-black tree properties remain intact after removing a node. The key steps are:
+1. Find the node to delete.
+2. If the node has two children, replace it with the minimum value from the right subtree.
+3. Rebalance the tree after deletion using the `balance_delete` function.
 
-### Pseudocode
-1. Define a helper function `insert_aux`:
-   - If `Empty`, insert a new `Red` node with the value.
-   - If `Node(color, left, y, right)`:
-     - Traverse left or right based on `value` vs. `y`.
-     - Recur with the `balance` function applied.
-2. Call `insert_aux` on the initial tree.
-3. Ensure the root node is recolored to `Black`.
+### **`balance_delete` function**
+- Balances the tree after deletion to maintain red-black properties.
+- **Input**: Node information (color, value, left subtree, right subtree).
+- **Output**: A balanced red-black subtree.
+- **TODO**: Implement pattern matching for rebalancing cases.
 
-### Instructions
-1. Implement the `insert_aux` helper function with recursive calls.
-2. Use `balance` to adjust the subtree structure if necessary.
-3. After calling `insert_aux`, recolor the root to `Black` before returning.
+### **`delete` function**
+- Implements the full deletion algorithm, including:
+  - Finding the node.
+  - Handling special cases (e.g., one child or no children).
+  - Calling `balance_delete` as needed.
+- **TODO**: Implement logic for deleting nodes and rebalancing the tree.
+- Use the `min_value_node` helper function to find the smallest value in the right subtree when replacing a node.
 
----
-
-## `insert_tr` (Tail-Recursive Insert)
-
-### Description
-The `insert_tr` function is a tail-recursive version of `insert`. It should also ensure the tree is balanced after inserting the value, and the root should be recolored to `Black`.
-
-### Instructions
-1. Define `insert_aux` to use an accumulator for holding the path as you traverse.
-2. After reaching the insertion point, reconstruct the tree using `balance` on the accumulated path back to the root.
-3. Ensure the root is recolored to `Black`.
+Refer to the **Deletion Explanation** for a detailed breakdown of the algorithm.
 
 ---
 
-## 2. Deletion of nodes
+## **3. Validation**
 
-## `recolor`
+To ensure that a red-black tree satisfies all its properties, you will implement the `is_valid` function. This function verifies:
+1. All paths from a node to its leaves have the same number of black nodes (black-height).
+2. No red node has red children.
 
-### Description
-The `recolor` function adjusts the color of a node to black, which is useful in the deletion process to maintain the red-black properties when a subtree is removed.
+### **`black_height` function**
+- Computes the black height of the tree and checks that it is consistent for all paths.
+- **TODO**: Complete the recursive logic to return `0` if a violation is found or the correct black height otherwise.
 
-### Instructions
-1. Use pattern matching to check if the node is `Empty` or a `Node`.
-2. If it’s a `Node`, return a new node with the same structure, but with its color changed to `Black`.
-3. If it’s `Empty`, return `Empty`.
+### **`no_red_with_red_child` function**
+- Checks that no red node has a red child.
+- **TODO**: Complete the recursive logic to traverse the tree and verify this property.
 
----
+### **`is_valid` function**
+- Combines the results of `black_height` and `no_red_with_red_child` to determine if the tree is valid.
+- **TODO**: Use the helper functions to return `true` if the tree satisfies all properties or `false` otherwise.
 
-## `balance_delete`
-
-### Description
-The `balance_delete` function restores red-black tree balance after a deletion operation. This function handles cases where the removal of a node causes an imbalance in the black-height property.
-
-### Instructions
-1. Write pattern matches to identify imbalance scenarios after deletion:
-   - Identify cases where one child is `Red` and the other is `Black`, or vice versa.
-   - Adjust the subtree structures to maintain the red-black properties, using rotations and color changes as needed.
-2. For each balancing case, use `make_node` to reconstruct balanced subtrees.
-3. Return the final balanced tree structure.
-
----
-
-## `delete`
-
-### Description
-The `delete` function removes a specified value from the red-black tree. After deletion, it re-balances the tree and recolors the root to `Black` if necessary.
-
-### Pseudocode
-1. Define a helper function `delete_aux`:
-   - If `Empty`, return `Empty`.
-   - If `Node(color, left, y, right)`:
-     - Traverse left or right based on `value` vs. `y`.
-     - If `y = value`:
-       - Handle cases where `left` or `right` is `Empty`.
-       - For two non-empty children, find the minimum value in the right subtree and replace `y` with it.
-       - Rebalance using `balance_delete`.
-2. Call `delete_aux` on the initial tree.
-3. Ensure the root node is recolored to `Black`.
-
-### Instructions
-1. Implement the `delete_aux` helper function using pattern matching for each case.
-2. Use `balance_delete` to adjust the subtree if the removal causes an imbalance.
-3. Ensure the root node is recolored to `Black` before returning.
-
----
-
-## 3. Validity of tree
-
-## `is_valid`
-
-### Description
-The `is_valid` function verifies whether the red-black tree maintains the properties of a red-black tree:
-1. Root node is black.
-2. No two consecutive red nodes.
-3. Every path from root to leaves has the same black height.
-
-### Instructions
-1. Write a recursive function that:
-   - Checks that no two consecutive nodes are `Red`.
-   - Verifies that the number of `Black` nodes is consistent across all paths.
-2. Return `true` if the tree satisfies all properties, otherwise `false`.
+Refer to the **Validity Explanation** for a concise breakdown of the requirements.
