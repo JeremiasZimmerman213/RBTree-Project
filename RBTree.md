@@ -137,9 +137,9 @@ Final Adjustments:
 
 Time Complexity Analysis:
 
-- Search for the Node to Delete:  O(\log n) , since the height of the tree is bounded by  O(\log n) .
-- Balancing Operations: Each balancing operation (rotations and recoloring) takes  O(1) , and there can be at most  O(\log n)  such operations (one per level of the tree).
-- Overall Complexity:  O(\log n) .
+- Search for the Node to Delete:  O(log n) , since the height of the tree is bounded by  O(log n) .
+- Balancing Operations: Each balancing operation (rotations and recoloring) takes  O(1) , and there can be at most  O(log n)  such operations (one per level of the tree).
+- Overall Complexity:  O(log n) .
 
 
 ### **Check Validity:**

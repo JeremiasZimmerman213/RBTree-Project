@@ -1,7 +1,7 @@
 # **Motivation for Red-Black Trees in Functional Programming**
 
 ### **Why Red-Black Trees?**
-Red-black trees are a type of self-balancing binary search tree designed to efficiently handle dynamic datasets. These trees are known for their balanced structure, maintained by enforcing specific properties on node "colors" (red or black). This balance enables red-black trees to perform search, insertion, and deletion operations with a time complexity of \(O(\log n)\) in the worst case, making them ideal for applications where fast and reliable data access is critical.
+Red-black trees are a type of self-balancing binary search tree designed to efficiently handle dynamic datasets. These trees are known for their balanced structure, maintained by enforcing specific properties on node "colors" (red or black). This balance enables red-black trees to perform search, insertion, and deletion operations with a time complexity of (O(log n)) in the worst case, making them ideal for applications where fast and reliable data access is critical.
 
 ### **Relevance in Functional Programming and OCaml**
 Implementing red-black trees in OCaml presents an opportunity to examine the interplay between functional programming and advanced data structures. Functional programming, characterized by immutability and pure functions, aligns well with data structures that require structural persistence. In OCaml, functional constructs such as recursion and pattern matching simplify the implementation of tree-based data structures by providing clear and concise ways to define and traverse nodes.
