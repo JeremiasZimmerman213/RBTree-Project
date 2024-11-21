@@ -66,6 +66,11 @@ However, in functional programming, we follow the same first 2 steps, but the th
 
 In the above cases, the notation Bz indicated that there is a node z that is blac, the capital R indicates a red node, and then a, b, c, and d are all subtrees, possibly empty, meaning we do not care about the specific nodes in them. The nodes marked with [] indicate that they are the node that violates the RB-tree property. By performing one rotation on one of the above cases, we are left with a section of the tree that no longer violates the properties, as seen below. However, it is possible that we simply moved the problem up, and we will need to balance once more.
 
+
+<br>
+<br>
+<br>
+
 ```txt
          Ry
         /  \
@@ -73,6 +78,7 @@ In the above cases, the notation Bz indicated that there is a node z that is bla
      / \   / \
     a   b c   d
 ```
+
 
 Now, if Ry does not have a parent, this means that it is the root of the tree. Thus, we need to make it Black, and then a node has been successfully. However, if Ry has a parent, we need to re-check and make sure that we have not created a new violation of the RB-tree properties. Specifically, since there can't be an issue with the black height, the problem would be that Ry's parent is a red node. So, we need to recursively travel up the tree, fixing these violations, until we reach the root node, where we will finally have a valid RB-tree.
 
@@ -182,5 +188,4 @@ Thus, to check the validity of a red-black tree:
 This method efficiently validates the tree by combining these checks during a single traversal of the tree, making it  O(n)  in time complexity for a tree with  n  nodes.
 
 
-For more information, check out our project's GitHub repo:
-[Link Text](https://github.com/JeremiasZimmerman213/COMP302-RBTree-Project) 
+For more information, check out our project's [GitHub Repo](https://github.com/JeremiasZimmerman213/COMP302-RBTree-Project) 
