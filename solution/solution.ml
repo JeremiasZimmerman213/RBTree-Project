@@ -1,104 +1,103 @@
-(* Color for nodes *)
+(* define the colours red and black to be used in tree data type *)
 type color = Red | Black
 
-(* Type for tree node *)
-type 'a rb_tree =
-  | Nil
-  | Node of color * 'a rb_tree * 'a * 'a rb_tree
+(* define the recursive data type for a tree *)
+(* either Nil (Leaf) or a recursvie Node with a colour, a value, a left sub tree and right sub tree*)
+type 'a rb_tree = 
+  | Nil 
+  | Node of color * 'a * 'a rb_tree * 'a rb_tree
 
-(* Helper function to create a node *)
-let make_node color left value right =
-  Node (color, left, value, right)
 
-(* Balancing the tree after insertion using Okasaki's method *)
-let balance = function
-  (* These four patterns handle double-red violations where parent is black *)
-  | Node (Black, Node (Red, Node (Red, a, x, b), y, c), z, d)
-  | Node (Black, Node (Red, a, x, Node (Red, b, y, c)), z, d)
-  | Node (Black, a, x, Node (Red, Node (Red, b, y, c), z, d))
-  | Node (Black, a, x, Node (Red, b, y, Node (Red, c, z, d))) ->
-      Node (Red,
-            Node (Black, a, x, b),
-            y,
-            Node (Black, c, z, d))
-  | node -> node  (* No balancing needed *)
+(* 1. INSERT *)
 
-(* Insert a value into the Red-Black Tree *)
-let insert tree value =
-  let rec ins node =
-    match node with
-    | Nil ->
-        (* Insert as a red node if empty *)
-        Node (Red, Nil, value, Nil)
-    | Node (color, left, x, right) ->
-        if value < x then
-          balance (Node (color, ins left, x, right))
-        else if value > x then
-          balance (Node (color, left, x, ins right))
-        else
-          node  (* value already exists, return node *)
+(* balance helper function needed to Okasaki's insert algorithm *)
+let balance (color, a, left, right) = match color, a, left, right with
+  (* case 1 *)
+  | Black, z, Node (Red, y, Node (Red, x, a, b), c), d
+  (* case 2 *)
+  | Black, z, Node (Red, x, a, Node (Red, y, b, c)), d
+  (* case 3 *)
+  | Black, x, a, Node (Red, z, Node (Red, y, b, c), d)
+  (* case 4 *)
+  | Black, x, a, Node (Red, y, b, Node (Red, z, c, d)) ->
+    (* perform rotation *)
+    Node (Red, y, Node (Black, x, a, b), Node (Black, z, c, d))
+  | a, b, c, d -> Node (a, b, c, d)
+
+
+let insert t x =
+  let rec insert_aux = function
+    | Nil -> Node (Red, x, Nil, Nil) (* colour the new node red *)
+    (* BST insert - checking if larger or smaller than a node, and recursing down either the left or right *)
+    (* balance is called in order to balance the result of each of the recursive calls *)
+    | Node (color, y, a, b) as s ->
+      if x < y then balance (color, y, insert_aux a, b)
+      else if x > y then balance (color, y, a, insert_aux b)
+      else s
   in
-  match ins tree with
-  | Node (_, left, x, right) ->
-      (* Ensure the root is always black *)
-      Node (Black, left, x, right)
-  | Nil -> Nil
+  match insert_aux t with
+  (* colour the root black *)
+  | Node (_, y, a, b) -> Node (Black, y, a, b)
+  (* this will never happen, but needed for exhaustive pattern match *)
+  | Nil -> failwith "failed"
 
-(* Tail-recursive insert function using the same insertion logic *)
-let insert_tr tree value =
-  let rec insert_aux path node =
-    match node with
+
+let insert_tr s x =
+  let rec insert_aux path = function
     | Nil ->
-        List.fold_left (fun acc (color, x, dir) ->
-          match dir with
-          | `Left -> balance (Node (color, acc, x, Nil))
-          | `Right -> balance (Node (color, Nil, x, acc))
-        ) (Node (Red, Nil, value, Nil)) path
-    | Node (color, left, x, right) as n ->
-        if value < x then
-          insert_aux ((color, x, `Left) :: path) left
-        else if value > x then
-          insert_aux ((color, x, `Right) :: path) right
+        let new_node = Node (Red, x, Nil, Nil) in
+        List.fold_left
+          (fun acc (color, value, direction) ->
+              match direction with
+              | `Left -> balance (color, value, acc, Nil)
+              | `Right -> balance (color, value, Nil, acc))
+          new_node path
+    | Node (color, y, left, right) as node ->
+        if x < y then insert_aux ((color, y, `Left) :: path) left
+        else if x > y then insert_aux ((color, y, `Right) :: path) right
         else
-          n
+          List.fold_left
+            (fun acc (color, value, direction) ->
+                match direction with
+                | `Left -> balance (color, value, acc, Nil)
+                | `Right -> balance (color, value, Nil, acc))
+            node path
   in
-  match insert_aux [] tree with
-  | Node (_, left, x, right) -> Node (Black, left, x, right)
-  | Nil -> Nil
+  match insert_aux [] s with
+  | Node (_, value, left, right) -> Node (Black, value, left, right)
+  | Nil -> failwith "failed"
 
-(* Helper function to recolor a node to black *)
+(* 2. DELETION *)
+(* Helper to recolor a node to black *)
 let recolor node =
   match node with
-  | Node (_, l, x, r) -> Node (Black, l, x, r)
+  | Node (_, x, l, r) -> Node (Black, x, l, r)
   | Nil -> Nil
 
 (* Find the minimum value node in the subtree *)
 let rec min_value_node = function
   | Nil -> failwith "Empty subtree: No minimum node"
-  | Node (_, Nil, x, _) -> x
-  | Node (_, left, _, _) -> min_value_node left
+  | Node (_, x, Nil, _) -> x
+  | Node (_, _, left, _) -> min_value_node left
 
 (* Balancing the tree after deletion *)
 let balance_delete node =
   match node with
-  | Node (Black, Node (Red, a, x, b), y, Node (Black, c, z, d))
-  | Node (Black, Node (Red, a, x, b), y, Node (Black, c, z, d)) ->
-      Node (Red,
-            Node (Black, a, x, b),
-            y,
-            Node (Black, c, z, d))
+  | Node (Black, x, Node (Red, y, a, b), Node (Black, z, c, d))
+  | Node (Black, y, Node (Black, x, a, b), Node (Red, z, c, d)) ->
+      Node (Red, y, Node (Black, x, a, b), Node (Black, z, c, d))
   | _ -> node
 
 (* Delete a value from the Red-Black Tree *)
-(* let delete tree value =
+let delete tree n =
   let rec del node =
     match node with
     | Nil -> Nil
-    | Node (color, left, x, right) ->
-        if value < x then
-          balance_delete (Node (color, del left, x, right))
-        else if value > x then
-          balance_delete (Node (color, left, x, del right))
+    | Node (color, x, left, right) ->
+        if n < x then
+          balance_delete (Node (color, x, del left, right))
+        else if n > x then
+          balance_delete (Node (color, x, left, del right))
         else
           (* Found the node to delete *)
           match left, right with
@@ -107,17 +106,19 @@ let balance_delete node =
           | _, Nil -> recolor left
           | _ ->
               let m = min_value_node right in
-              balance_delete (Node (color, left, m, delete right m))
+              balance_delete (Node (color, m, left, del right))
   in
   match del tree with
-  | Node (_, left, x, right) -> Node (Black, left, x, right)
-  | Nil -> Nil *)
+  | Node (_, x, left, right) -> Node (Black, x, left, right)
+  | Nil -> Nil
 
+
+(* 3. VALIDITY *)
 (* Check for validity of Red-Black Tree *)
 let is_valid tree =
   let rec black_height = function
     | Nil -> 1
-    | Node (c, l, _, r) ->
+    | Node (c, _, l, r) ->
         let left_bh = black_height l in
         let right_bh = black_height r in
         if left_bh = 0 || right_bh = 0 || left_bh <> right_bh then 0
@@ -127,7 +128,7 @@ let is_valid tree =
   in
   let rec no_red_with_red_child = function
     | Nil -> true
-    | Node (color, left, _, right) ->
+    | Node (color, _, left, right) ->
       match color with
       | Red ->
           (match left, right with
@@ -138,6 +139,9 @@ let is_valid tree =
   in
   (black_height tree > 0) && no_red_with_red_child tree
 
+
+(* tests *)
+(* Helper function to insert a list of values into a Red-Black Tree *)
 (* Helper function to format a node's display *)
 let format_node color value =
   match color with
@@ -156,7 +160,7 @@ let rec print_tree_with_indent tree indent =
   | Nil ->
       print_spaces indent;
       print_endline "Nil"
-  | Node (color, left, value, right) ->
+  | Node (color, value, left, right) ->
       (* Print right subtree first for a sideways view *)
       print_tree_with_indent right (indent + 4);
       (* Print current node with its color and value *)
@@ -170,9 +174,6 @@ let print_tree tree =
   print_endline "Red-Black Tree Structure:";
   print_tree_with_indent tree 0
 
-(* Test cases for Red-Black Tree *)
-
-(* Helper function to insert a list of values into a Red-Black Tree *)
 let insert_all tree values =
   List.fold_left insert tree values
 
@@ -242,13 +243,6 @@ let test_root_color_change () =
   print_endline "Test 10: Inserting values that cause root recoloring";
   print_and_separator tree
 
-(* Test 11: Deleting a value from the tree *)
-(* let test_delete_value () =
-  let tree = insert_all Nil [10; 5; 1; 20; 30] in
-  print_endline "Test 11: Deleting a value (5) from the tree";
-  let tree_after_deletion = delete tree 5 in
-  print_and_separator tree_after_deletion *)
-
 (* Run all tests *)
 let run_tests () =
   test_ascending_order ();
@@ -261,7 +255,6 @@ let run_tests () =
   test_single_insert ();
   test_height_3_tree ();
   test_root_color_change ();;
-  (* test_delete_value ();; *)
 
 (* Execute the tests *)
 run_tests ()
